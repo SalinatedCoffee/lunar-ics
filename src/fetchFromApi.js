@@ -1,21 +1,22 @@
 /**
  * Handles sending requests / getting responses from the API endpoint.
+ * TODO: Maybe remove authentication key handling somewhere else
  */
 
 require('dotenv').config()
 AUTH_KEY = process.env.AUTH_KEY
 ENDPOINT_URL = 'http://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService'
-/* getLunCallInfo: Converts Gregorian date to Korean Lunar date.
- * int solYear: Year of Gregorian date to convert
- * int solMonth: Month of Gregorian date to convert
- * int solDay: Day of Gregorian date to convert
+/* getLunCallInfo: Converts Korean lunar date to Gregorian date.
+ * int lunYear: Year of Korean lunar date to convert
+ * int lunMonth: Month of Korean lunar date to convert
+ * int lunDay: Day of Korean lunar date to convert
  * 
- * Example request: {ENDPOINT_URL}/{GREG2KLUN}?{GREG2KLUN_Y}=2015&{GREG2KLUN_M}=01&{GREG2KLUN_D}=01&ServiceKey={AUTH_KEY}
+ * Example request: {ENDPOINT_URL}/{KLUN2GREG}?{KLUN2GREG_Y}=2015&{KLUN2GREG_M}=01&{KLUN2GREG_D}=01&ServiceKey={AUTH_KEY}
  */
-GREG2KLUN = 'getLunCallInfo'
-GREG2KLUN_Y = 'solYear'
-GREG2KLUN_M = 'solMonth'
-GREG2KLUN_D = 'solDay'
+KLUN2GREG = 'getSolCallInfo'
+KLUN2GREG_Y = 'lunYear'
+KLUN2GREG_M = 'lunMonth'
+KLUN2GREG_D = 'lunDay'
 
 /**
  * Object containing properly formatted date for sendRequest.
@@ -46,8 +47,7 @@ class CleanDate{
 
 
 /**
- * Sends a request for a Korean lunar date conversion given a Gregorian date.
- * TODO: Parse response XML to something else
+ * Sends a request for a Gregorian date conversion given a Korean lunar date.
  * @param {string} query_y Year of the date to request.
  * @param {string} query_m Month of the date to request.
  *                         Single-digit numbers should be padded with a 0 (e.g. '01' instead of '1').
@@ -55,12 +55,13 @@ class CleanDate{
  *                         Single-digit numbers should be padded with a 0.
  */
 function sendRequest(query_y, query_m, query_d) {
-    request = ENDPOINT_URL + '/' + GREG2KLUN + '?'
-              + GREG2KLUN_Y + '=' + query_y
-              + GREG2KLUN_M + '=' + query_m
-              + GREG2KLUN_D + '=' + query_d
-              + '&ServiceKey=' + AUTH_KEY
+    request = ENDPOINT_URL + '/' + KLUN2GREG + '?'
+              + KLUN2GREG_Y + '=' + query_y
+              + KLUN2GREG_M + '=' + query_m
+              + KLUN2GREG_D + '=' + query_d
+              + '&serviceKey=' + AUTH_KEY
 
     return fetch(request)
-            .then((response) => null)
+            .then((response) => response)
+            .catch((error) => error)
 }
