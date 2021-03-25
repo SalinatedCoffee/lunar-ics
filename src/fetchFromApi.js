@@ -3,9 +3,14 @@
  * TODO: Maybe remove authentication key handling somewhere else
  */
 
-require('dotenv').config()
-AUTH_KEY = process.env.AUTH_KEY
-ENDPOINT_URL = 'http://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService'
+const res = require('dotenv').config();
+
+if (res.error) {
+    throw res.error;
+}
+
+const AUTH_KEY = process.env.AUTH_KEY;
+const ENDPOINT_URL = 'http://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService';
 /* getLunCallInfo: Converts Korean lunar date to Gregorian date.
  * int lunYear: Year of Korean lunar date to convert
  * int lunMonth: Month of Korean lunar date to convert
@@ -13,10 +18,10 @@ ENDPOINT_URL = 'http://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoServic
  * 
  * Example request: {ENDPOINT_URL}/{KLUN2GREG}?{KLUN2GREG_Y}=2015&{KLUN2GREG_M}=01&{KLUN2GREG_D}=01&ServiceKey={AUTH_KEY}
  */
-KLUN2GREG = 'getSolCallInfo'
-KLUN2GREG_Y = 'lunYear'
-KLUN2GREG_M = 'lunMonth'
-KLUN2GREG_D = 'lunDay'
+const KLUN2GREG = 'getSolCalInfo';
+const KLUN2GREG_Y = 'lunYear';
+const KLUN2GREG_M = 'lunMonth';
+const KLUN2GREG_D = 'lunDay';
 
 /**
  * Object containing properly formatted date for sendRequest.
@@ -37,11 +42,11 @@ class CleanDate{
             throw 'CleanDate(): Input is malformed.\n' + '('
                   + y.toString() + ', '
                   + m.toString() + ', '
-                  + d.toString() + ')'
+                  + d.toString() + ')';
         }
-        this.year = y.toString()
-        this.month = m.toString().padStart(2, '0')
-        this.day = d.toString().padStart(2, '0')
+        this.year = y.toString();
+        this.month = m.toString().padStart(2, '0');
+        this.day = d.toString().padStart(2, '0');
     }
 }
 
@@ -55,13 +60,18 @@ class CleanDate{
  *                         Single-digit numbers should be padded with a 0.
  */
 function sendRequest(query_y, query_m, query_d) {
-    request = ENDPOINT_URL + '/' + KLUN2GREG + '?'
+    let request = ENDPOINT_URL + '/' + KLUN2GREG + '?'
               + KLUN2GREG_Y + '=' + query_y
-              + KLUN2GREG_M + '=' + query_m
-              + KLUN2GREG_D + '=' + query_d
-              + '&serviceKey=' + AUTH_KEY
+              + '&' + KLUN2GREG_M + '=' + query_m
+              + '&' + KLUN2GREG_D + '=' + query_d
+              + '&serviceKey=' + AUTH_KEY;
 
     return fetch(request)
-            .then((response) => response)
-            .catch((error) => error)
+            .then((response) => response.text())
+            .catch((error) => error);
+}
+
+module.exports = {
+    sendRequest,
+    CleanDate
 }
