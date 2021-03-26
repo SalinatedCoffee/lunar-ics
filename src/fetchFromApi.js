@@ -10,7 +10,7 @@ if (res.error) {
 }
 
 const AUTH_KEY = process.env.AUTH_KEY;
-const ENDPOINT_URL = 'http://apis.data.go.kr/B090041/openapi/service/LrsrCldInfoService';
+const ENDPOINT_URL = process.env.ENDPOINT_URL;
 /* getLunCallInfo: Converts Korean lunar date to Gregorian date.
  * int lunYear: Year of Korean lunar date to convert
  * int lunMonth: Month of Korean lunar date to convert
